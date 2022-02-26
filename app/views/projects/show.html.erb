@@ -1,0 +1,101 @@
+<div class="page-header" >
+  <h2><%= @project.name %></h2>
+  <p><%= @project.description %></p>
+</div>
+
+<script>pollSubmissions('<%= @project.id %>')</script>
+
+<div style="display:inline-block">
+  <%= link_to '返回', projects_path, class: "btn btn-info" %>
+  <%= link_to '编辑', edit_project_path(@project), class: "btn btn-warning" %>
+  <%= link_to "打开文件目录", OodAppkit.files.url(path: @project.directory).to_s, 
+    class: 'btn btn-primary btn-sm', :target => '_blank' %>
+</div>
+
+<br><br>
+
+<div id="script-list-view" class="panel panel-default">
+  <div class="panel-body" >
+    <table id="script-list-table" class="table data-table" >
+      <thead>
+        <tr> 
+          <th>名称</th>
+          <th>模板</th>
+          <th>文件</th>
+          <th>编号</th>
+          <th>状态</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @project.scripts.each do |script| %>
+          <tr class="script-row" >
+
+            <td><%= script.name %></td>
+            <td><%= script.frames %></td>
+            <td><%= script.file.nil? ? "not selected" : File.basename(script.file) %></td>
+            <td><div id="script-<%= script.id %>-job-id"><%= script.latest_job_id %></div></td>
+
+            <td id="status_label_<%= script.id %>">
+              <%= status_label(script.latest_status, script.id) %>
+            </td>
+            <td>
+                <%= link_to "提交", project_script_submit_path(@project, script), :method => :put, 
+                    class: 'btn btn-success btn-sm', id: "submit-button-" + script.id.to_s %>
+                <%= link_to "停止", project_script_stop_job_path(@project, script, script.latest_id), 
+                    :method => :delete, class: 'btn btn-danger btn-sm disabled', id: "stop-button-" + script.id.to_s, disabled: "disabled" %>
+                <%= link_to "编辑", edit_project_script_path(@project, script), :method => :get, class: 'btn btn-info btn-sm'%>
+                <%= link_to "删除", project_script_path(@project, script), 
+                      :method => :delete, class: 'btn btn-danger btn-sm', data: {confirm: "Are you sure?"} %>
+
+                <%= link_to "查看作业结果", project_script_path(@project, script), :method => :get, class: 'btn btn-primary btn-sm'%>
+                
+            </td>
+          </tr>
+        <% end %>
+      <tbody>
+    </table>
+  </div>
+</div>
+
+<%= link_to '创建新的作业', new_project_script_path(@project), class: "btn btn-primary" %>
+
+
+<br><br>
+
+<% if thumbnails(@project.directory).size > 0 %>
+<div id="thumbnail-list-view" class="panel panel-default">
+  <div class="panel-body" >
+    <table id="thumbnail-list-table" class="table data-table" >
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Image</th>
+        </tr>
+      </thead>
+          <%= %>
+      <tbody>
+        <% images(@project.directory).each do |image| %>
+          <tr>
+            <td>
+            <%-
+              basename = File.basename(image)
+              dir = File.dirname(image)
+            -%>
+            <%= link_to(basename, "/pun/sys/files/fs#{dir}/#{url_encode(basename)}?download=1") %>
+            <td>
+              <img 
+                class="d-block w-100 thumbnail-zoom" 
+                src="/pun/sys/files/api/v1/fs<%= image_to_thumbnail(@project.directory, image) %>"
+                onClick="window.open(this.src)"
+              >
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+
+    </table>
+  <div>
+</div>
+<% end %>

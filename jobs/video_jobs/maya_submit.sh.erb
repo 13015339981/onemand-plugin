@@ -1,0 +1,91 @@
+#!/bin/bash
+
+# set the resources requests. because it's Slurm, we just use --exclusive
+# instead of caring about cores
+
+#SBATCH --job-name=openfoam
+#SBATCH --partition=cpu
+#SBATCH -N <%= nodes %>
+#SBATCH --exclusive
+#SBATCH --output=%j.out
+#SBATCH --error=%j.err
+#
+
+
+#echo "starting at $(date)"
+
+module purge
+module load lammps/2020-cpu
+ulimit -s unlimited
+ulimit -l unlimited
+
+
+
+<%
+  groups = OodSupport::Process.groups.map(&:name)
+%>
+
+
+RENDERER="<%= renderer %>"
+EXTRA_ARGS="<%= extra %>"
+PRJ_DIR="<%= project_dir %>"
+SKIP_EXISTING="-skipExistingFrames <%= skip_existing %>"
+SCRIPT_FILE="<%=file%>"
+TYPE="<%= type%>"
+
+echo $PRJ_DIR
+echo $SCRIPT_FILE
+
+echo "lammps start at $(date)"
+
+cp $PRJ_DIR/*.eam ./
+cp $PRJ_DIR/*.lj ./ 
+
+#cd case01
+
+
+
+echo $EXTRA_ARGS
+
+#foamCleanTutorials
+#blockMesh | tee log.blockMesh
+#surfaceFeatureExtract | tee log.surfaceFeatureExtract
+#snappyHexMesh -overwrite | tee log.shm
+#checkMesh | tee log.checkMesh
+#rm -rf 0
+#cp -r 0_org 0
+#setFields | tee log.setFields
+#createPatch -dict system/createPatchDict.0 -overwrite
+#createPatch -dict system/createPatchDict.1 -overwrite
+#decomposePar
+#mpirun -np 4 renumberMesh -overwrite -parallel
+#mpirun -np 4 interFoam -parallel | tee log.solver
+
+srun --mpi=pmi2 lmp -i $SCRIPT_FILE  $EXTRA_ARGS  
+
+
+#mpirun -np 8 paraFoam -parallel 
+ 
+   
+
+echo "lammps ended at $(date)"
+
+
+
+# if it's a single node, SLURM_ARRAY_TASK_ID isn't set so set it to 1
+[ -n "$SLURM_ARRAY_TASK_ID" ] || SLURM_ARRAY_TASK_ID=1
+
+
+
+#echo "executing: ${CMD[@]} <%= Shellwords.escape(file) %>"
+echo "on host: $(hostname)"
+
+
+
+
+echo "ended at $(date)"
+echo "ended with status $STATUS"
+
+
+
+exit $STATUS

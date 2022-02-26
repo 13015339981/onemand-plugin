@@ -1,0 +1,37 @@
+#!/bin/bash
+#SBATCH --job-name=session
+#SBATCH --partition=cpu
+#SBATCH -N 1
+#SBATCH --exclusive
+#
+#<% if renderer.to_i >= 3 -%>
+##SBATCH --gpus-per-node 2
+#<% end -%>
+
+module purge
+module load gcc
+module list
+
+#UTIL_FILE="$TMPDIR/utils.rb"
+
+# added 'shift' to this array as the 0th index because SLURM_ARRAY_TASK_ID is always
+# greater than or equal to 1.
+#START_FRAMES=(shift <%= task_start_frames.join(' ')%>)
+#END_FRAMES=(shift <%= task_end_frames.join(' ')%>)
+
+# if it's a single node, SLURM_ARRAY_TASK_ID isn't set so set it to 1
+[ -n "$SLURM_ARRAY_TASK_ID" ] || SLURM_ARRAY_TASK_ID=1
+
+#export TASK_START_FRAME=${START_FRAMES[$SLURM_ARRAY_TASK_ID]}
+#export TASK_END_FRAME=${END_FRAMES[$SLURM_ARRAY_TASK_ID]}
+
+
+
+# vray.bin -sceneFile=$OSC_VRAY_DIR/scenes/caustics.vrscene \
+#   -imgFile={output directory/caustics.exr} \
+#   -distributed=0 -imgWidth=1920 -imgHeight=1080 \
+#   -display=0 -rtEngine=5 -frames=1-10
+
+#mkdir -p "<%= project_dir %>/images"
+
+

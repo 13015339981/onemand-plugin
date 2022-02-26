@@ -1,0 +1,72 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+.navbar {
+  background-color: inherit;
+}
+
+.navbar-right {
+  float: right;
+}
+
+div.container[role="main"] {
+  width: 80%;
+}
+
+/*Generated using https://work.smarchal.com/twbscolor/css/e74c3cc0392becf0f1ffbbbc0*/
+.navbar-blue {
+  background-color: #6cace4;
+  border-color: #375c84;
+}
+nav.navbar-blue {
+  border-bottom: 1px solid darkblue;
+}
+.navbar-blue .navbar-brand {
+  color: #ecf0f1;
+}
+.navbar-blue .navbar-brand:hover,
+.navbar-blue .navbar-brand:focus {
+  color: #cccccc;
+}
+.navbar-blue .navbar-text {
+  color: #ecf0f1;
+}
+.navbar-blue .navbar-nav > li > a {
+  color: #ecf0f1;
+}
+.navbar-blue .navbar-nav > li > a:hover,
+.navbar-blue .navbar-nav > li > a:focus {
+  color: #cccccc;
+}
+.navbar-blue .navbar-nav > .active > a,
+.navbar-blue .navbar-nav > .active > a:hover,
+.navbar-blue .navbar-nav > .active > a:focus,
+.navbar-blue .navbar-nav > .active > a:active {
+  color: #cccccc;
+  background-color: #375c84;
+}
+.navbar-blue .navbar-nav > .open > a,
+.navbar-blue .navbar-nav > .open > a:hover,
+.navbar-blue .navbar-nav > .open > a:focus {
+  color: #cccccc;
+  background-color: #375c84;
+}
+.navbar-blue .navbar-nav a:hover,
+.navbar-blue .navbar-nav a:focus {
+  color: #cccccc;
+  background-color: #6cace4;
+}
+/* END navbar*/

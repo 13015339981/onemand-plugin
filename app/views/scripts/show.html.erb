@@ -1,0 +1,67 @@
+
+<div class="page-header" >
+  <h2><%= @script.name %></h2>  <!-- but also title type header  -->
+</div>
+
+<script>pollForUpdates('<%= @project.id %>', '<%= @script.id %>')</script>
+
+<%= link_to '返回', project_path(@project), class: "btn btn-info" %><br><br>
+
+<h3>所有作业运行结果<%= @script.name%></h3>
+
+<div id="script-list-view" class="panel panel-default">
+  <div class="panel-body" >
+    <table id="past-jobs-table" class="table data-table" >
+      <tbody>
+
+        <% @script.jobs.each do |job| %>
+        <tr><td>
+
+          <!-- the button to minimize the job results      -->
+          <button
+            id="job-<%= job.id %>-button"
+            class="job-result-button job-result-button-<%= normalize_css_str(job.status) %>"
+            onclick="toggle('job-<%= job.id %>-container')"
+            job_id="<%= job.id %>"
+            job_status="<%= job.status %>"
+          >
+            <%= job.job_id %> [<%= job.status %>]
+          </button>
+
+          <!-- containter for the job results div  so it can toggle -->
+          <div id="job-<%= job.id %>-container" style="display: none;">
+
+          <!-- the job results div -->
+            <div id="job-<%= job.id %>-info" >
+              <table class="table table-condensed table-striped">
+                <tbody>
+                  <tr>
+                    <td>作业</td>
+                    <td><%= job.job_id %></td>
+                  </tr>
+                  <tr>
+                    <td>输出文件</td>
+                    <td>
+                      <a href="<%= '/pun/sys/files/fs' + (job&.directory || @project.directory + '/batch_jobs/' + job.job_id) %>">打开文件目录</a></td>
+                  </tr>
+                  <tr>
+                    <td>创建时间</td>
+                    <td><%= local_time(job.created_at) %></td>
+                  </tr>
+                  <tr>
+                    <td>最后更新时间</td>
+                    <td><%= local_time(job.updated_at) %></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div> <!-- job info div -->
+
+          </div> <!-- toggle/hide container -->
+
+        </td></tr>
+        <% end %>
+
+      </tbody>
+    </table>
+  </div>
+</div>

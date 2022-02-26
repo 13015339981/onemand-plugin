@@ -1,0 +1,56 @@
+
+<%= bootstrap_form_for [@project, @script] do |form| %>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        编辑作业脚本
+      </div>
+
+      <div class="panel-body", role="main">
+        <%= form.text_field :name, required: true,label:"名称(必录项)" %> 
+
+        <%= form.select :version, @script.available_versions, required: true, label: "#{version_label(@project)} 版本号" %>
+
+        <%= form.hidden_field :frames,
+          required: false, placeholder: '1-100',value:'1-1',
+          pattern: '\d+-\d+', help: "Must be in the form startframe-endframe" %> 
+
+        <%= form.hidden_field :camera, required: false, placeholder: 'camera1' %>
+
+        <%= form.select :file, @project.scenes, required: true,label:"脚本文件" %>
+
+         <%= form.hidden_field :accounting_id, required: false, label: 'Chargeback project',
+          help: 'the project to charge to',
+          placeholder: 'PZS0714' %>  
+
+        <!-- hidden cluster field becuase of #17. We're only initially supporting one cluster, which is the
+        default cluster. -->
+        <%= form.hidden_field :cluster, value: @script.cluster %>
+
+        <%= form.number_field :nodes, required: true, min: 1,label:"核数(必录项)" %>
+
+      <!--  <%= form.select :renderer, @script.renderers, required: false %>-->
+
+        <%= form.text_field :extra, required: false,
+            label: '其他参数(非必录项)',
+            placeholder: '',
+            help: ("#{link_to 'Help Docs', 'https://docs.hpc.sjtu.edu.cn/studio/alphafold-gui.html'}").html_safe %>
+
+        <%= form.number_field :walltime, required: true, help: '以小时为单位计算', min: 1,label:'最大运行时长(必录项)' %>
+
+    <!--    <%= form.hidden_field :email, label: 'Email when finished' %>-->
+
+<!--        <%= form.hidden_field :skip_existing, label: 'Do not render existing frames' %>-->
+
+      </div> <!-- main panel body -->
+    </div> <!-- outer panel -->
+
+
+  <p>
+    <%= form.submit '保存', class: 'btn btn-primary' %>
+    <%= form.button '重置', type: :reset, class: 'btn btn-default' %>
+    <%= link_to '返回', project_path(@project), class: 'btn btn-default' %>
+  <p>
+
+<% end %>
+

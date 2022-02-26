@@ -1,0 +1,19 @@
+<div class="page-header" >
+  <h2>编辑项目 <%= @project.name %></h2>
+</div>
+
+<div>
+  <div class="btn-group open">
+    <%= button_to 'Delete', 
+      project_path(@project),
+      method: :delete,
+      data: { confirm: 'Are you sure?' },
+      class: "btn btn-danger",
+      id: "delete_project_button"
+    %>
+  </div>
+</div>
+
+<br>
+
+<%= render 'form' %>

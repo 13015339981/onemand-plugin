@@ -1,0 +1,116 @@
+#!/bin/bash
+
+# set the resources requests. because it's Slurm, we just use --exclusive
+# instead of caring about cores
+
+#SBATCH --job-name=session
+#SBATCH --partition=dgx2
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=<%= 6*nodes %>
+#SBATCH --gres=gpu:<%= nodes %>
+#SBATCH --output=%j.out
+#SBATCH --error=%j.err
+#
+
+# TMPDIR currently set to something like /tmp/pbstmp.7431620[1] (unescaped)
+# and Maya cannot read filepaths like that correctly.
+#JOB_TMPDIR=$TMPDIR
+#echo $JOB_TMPDIR
+#BIND_DIRS="$JOB_TMPDIR:/tmp"
+#echo $BIND_DIRS
+# set a new tmpdir bc that's what the container needs to look at
+#export TMPDIR="/tmp"
+
+#UTIL_FILE="$JOB_TMPDIR/utils.rb"
+
+#cat > "$UTIL_FILE" <<UTILS
+
+
+#echo "starting at $(date)"
+
+#module purge
+#load the singularity and ACCAD modules and record the loaded module list
+#module use /usr/local/share/lmodfiles/project/osc
+#module load singularity/current
+#module load ruby
+
+<%
+  groups = OodSupport::Process.groups.map(&:name)
+%>
+#echo "your,${groups}"
+
+#<% if groups.include?('mayakentst') %>
+#module load alphafold
+#module load maya/<%= module_version %>-kent
+#<% else %>
+#<%# this module blocked by group membership on the file system, so OK to be in else block %>
+#module load project/accad
+#module load maya/<%= module_version %>-accad
+#<% end %>
+
+#mkdir -p $JOB_TMPDIR/Autodesk
+#BIND_DIRS="$BIND_DIRS,$JOB_TMPDIR/Autodesk:/var/opt/Autodesk"
+#echo $BIND_DIRS
+# init the tmpdir
+#TMPDIR=$JOB_TMPDIR maya_init.sh
+
+# set all the different variables you'll need
+
+RENDERER="<%= renderer %>"
+EXTRA_ARGS="<%= extra %>"
+PRJ_DIR="<%= project_dir %>"
+SKIP_EXISTING="-skipExistingFrames <%= skip_existing %>"
+SCRIPT_FILE="<%=file%>"
+TYPE="<%= type%>"
+
+echo $PRJ_DIR
+echo $SCRIPT_FILE
+echo "AlphaFold start at $(date)"
+
+cp $SCRIPT_FILE ./
+
+
+echo "true-1011"
+module purge
+module load alphafold
+module list
+echo $PWD
+run_af2  $PWD  --preset=casp14  test.fasta  --max_template_date=2021-09-12
+ 
+   
+
+echo "AlphaFold ended at $(date)"
+
+## added 'shift' to this array as the 0th index because SLURM_ARRAY_TASK_ID is always
+## greater than or equal to 1.
+## START_FRAMES=(shift <%= task_start_frames.join(' ')%>)
+## END_FRAMES=(shift <%= task_end_frames.join(' ')%>)
+
+# if it's a single node, SLURM_ARRAY_TASK_ID isn't set so set it to 1
+[ -n "$SLURM_ARRAY_TASK_ID" ] || SLURM_ARRAY_TASK_ID=1
+
+#export TASK_START_FRAME=${START_FRAMES[$SLURM_ARRAY_TASK_ID]}
+#export TASK_END_FRAME=${END_FRAMES[$SLURM_ARRAY_TASK_ID]}
+
+#CMD=(singularity exec -B $BIND_DIRS $MAYA_IMG Render)
+#CMD+=(-r $RENDERER $SKIP_EXISTING ${EXTRA_ARGS} -proj $PRJ_DIR -s $TASK_START_FRAME -e $TASK_END_FRAME)
+
+#echo "executing: ${CMD[@]} <%= Shellwords.escape(file) %>"
+echo "on host: $(hostname)"
+echo "with modules:"
+module list
+
+# now let's actually execute and grab the end status
+#${CMD[@]} <%= Shellwords.escape(file) %>
+#STATUS=$?
+
+echo "ended at $(date)"
+echo "ended with status $STATUS"
+
+#if [ $STATUS -eq 0 ]; then
+#  echo "now creating thumbnails"
+#  ruby -r $UTIL_FILE -e create_thumbnails
+#fi
+
+exit $STATUS

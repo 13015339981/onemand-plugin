@@ -1,0 +1,18 @@
+<div class="page-header" >
+  <h2>新建项目</h2>
+</div>
+
+<div>
+  在新建项目之前，请确保你的脚本文件已上传到服务器 <br>
+  你可以按照 <a href="https://docs.hpc.sjtu.edu.cn/studio/alphafold-gui.html">此文档</a>上的说明操作.
+  <br><br>
+
+  <% if Configuration.sftp_host %>
+  如果您已经安装了 SFTP 客户端，您可以单击
+  <a href="sftp://<%= ENV["USER"] %>@<%= Configuration.sftp_host %><%= @project.directory %>/">此处</a> 打开它.
+  <br><br>
+  <% end %>
+
+</div>
+
+<%= render 'form' %>

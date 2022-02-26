@@ -1,0 +1,46 @@
+<div class="page-header" >
+  <h2>个人项目</h2>
+</div>
+
+<div>
+  <div class="btn-group open">
+    <a  data-method="get" 
+        data-toggle="tooltip" 
+        title="Create a new Project" 
+        href="<%= new_project_path %>"
+    >
+      
+    <button type="button" id="new_job_button" class="btn btn-primary" > 新建项目</button></a>
+  </div>
+</div>
+
+<br>
+<br>
+
+<h3>项目</h3>
+
+<div id="submission-list-view" class="panel panel-default">
+  <div class="panel-body" >
+    <table id="submission-list-table" class="table data-table" >
+
+    <thead>
+      <tr>
+        <th>项目名称</th>
+        <th>操作</th>
+      <tr>
+    </thead>
+
+    <tbody>
+      <% @projects.each do |project| %>
+        <tr>
+          <td><%= link_to project.name, project_path(project)  %></td>
+          <td><%= link_to '进行中...', project_path(project), class: 'btn btn-success btn-sm' %>
+          <td><%= link_to '编辑', edit_project_path(project), class: 'btn btn-info btn-sm' %>
+          <td><%= link_to '删除', project_path(project), :method => :delete,
+            data: {confirm: "Are you sure?"}, class: 'btn btn-danger btn-sm' %>
+        <tr>
+      <% end %>
+    </tbody>
+
+  </div>
+</div>

@@ -1,0 +1,7 @@
+---
+name: LAMMPS 
+category: Customization Apps
+icon: fa://tasks
+description: |-
+  An application to render video frames from Maya.
+role: Graphics

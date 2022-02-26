@@ -1,0 +1,25 @@
+<%= bootstrap_form_for @project do |form| %>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      项目详情
+    </div>
+
+    <div class="panel-body", role="main">
+      <%= form.select :project_type, ['Lammps'], required: true,label:"项目类型(必录项)" %>
+      <%= form.text_field :name, label: 'name', required: true,label:"项目名称(必录项)" %>
+      <%= form.text_area :description, label: '描述(非必录项)' %>
+      <%= form.text_field :directory,
+        label: '目录', 'data-filepicker': 'true',
+        'data-target_file_type': 'dirs' %>
+    </div>
+  </div>
+
+  <p>
+    <%= form.submit '保存', class: 'btn btn-primary' %>
+    <%= form.button '重置', type: :reset, class: 'btn btn-default' %>
+    <%= link_to '返回', projects_path, class: 'btn btn-default' %>
+  <p>
+
+<% end %>
+
